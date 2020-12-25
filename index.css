@@ -50,13 +50,13 @@ body {
 
 .text {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-size: 20px;
+    font-size: 30px;
 }
 
 .ui-dialog-titlebar {
     background:#ffffff;
     font-family: my-font;
-    font-size: 30px;
+    font-size: 50px;
     color: red;
     text-align: center;
 }

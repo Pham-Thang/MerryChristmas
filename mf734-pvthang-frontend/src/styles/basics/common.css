@@ -93,3 +93,15 @@
 .icon-i {
     background: url('../../assets/ImagesIcons/ic_Info_20.svg') no-repeat center;
 }
+
+.icon-checkbox-inactive {
+    background: url('../../assets/ImagesIcons/ic_Checkbox_Inactive.svg') no-repeat center;
+}
+
+.icon-checkbox-active {
+    background: url('../../assets/ImagesIcons/ic_Checkbox_Active.svg') no-repeat center;
+}
+
+.icon-check {
+    background: url('../../assets/ImagesIcons/ic_Check.png') no-repeat center;
+}

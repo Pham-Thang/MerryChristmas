@@ -12,7 +12,7 @@
                 <label for="displayFeeInActive"><span></span>Hiển thị khoản thu ngừng theo dõi</label>
             </div>
             <div class="option__item float--right">
-                <button class="m-icon-button icon-delete"></button>
+                <button class="m-icon-button icon-delete" @click="btnDeleteOnClick_n" :disabled="listFeeIdDelete.length === 0"></button>
             </div>
             <div class="option__item float--right">
                 <button class="m-second-button">Sắp lại thứ tự</button>
@@ -46,13 +46,16 @@
                                 {{fee[col.key]}}
                                 <span v-if="fee.IsSystem" class="icon-i" title="Đây là khoản thu mặc định của hệ thống, bạn không thể xóa."></span>
                             </span>
-                            <span v-if="col.key !== 'FeeName'">{{fee[col.key]}}</span>
+                            <div v-else-if="isBool(fee[col.key])" class="">
+                                <div :class="{'icon-checkbox': true, 'icon-check': fee[col.key]}"></div>
+                            </div>
+                            <span v-else-if="col.key !== 'FeeName'">{{fee[col.key]}}</span>
                         </td>
                         <td class="optionCol">
                             <div class="m-flex">
                                 <div class="icon icon-edit" @click="btnEditOnClick(fee.FeeId)"></div>
                                 <div class="icon icon-duplicate" @click="btnDuplicateOnClick(fee.FeeId)"></div>
-                                <div class="icon icon-delete" @click="btnDeleteOnClick(fee.FeeId)"></div>
+                                <div class="icon icon-delete" @click="btnDeleteOnClick_1(fee.FeeId)"></div>
                             </div>
                         </td>
                     </tr>
@@ -61,14 +64,12 @@
         </div>
         <div class="footer">Tổng số: {{listFee.length}} kết quả</div>
         <FeeDetail v-if="formDetail" @close="closeForm" :mode="formMode" :listFeeGroup="listFeeGroup" :feeId="feeIdChange" @reloadData="loadData"/>
-        <div id="notification">
-            <div class="modal"></div>
-            <div class="dialog"></div>
-        </div>
+        <DialogDelete v-if="dialogDelete" @close="dialogDelete = false" @reloadData="loadData" :message="messageDelete" :mode="formMode" :listFeeId="listFeeIdDelete"/>
     </div>
 </template>
 <script>
 import FeeDetail from './FeeDetail'
+import DialogDelete from './DialogDelete.vue'
 import axios from 'axios'
 
 export default {
@@ -124,14 +125,18 @@ export default {
             listFeeGroup: [],
             feeIds: {},
             formDetail: false,
+            dialogDelete: false,
             formMode: null,
             selectAllRows: false,
             feeIdChange: null,
             showFeeInactive: false,
+            messageDelete: "",
+            listFeeIdDelete: []
         }
     },
     components: {
-        FeeDetail
+        FeeDetail,
+        DialogDelete
     },
     mounted() {
         this.loadData();
@@ -152,9 +157,25 @@ export default {
             this.formMode = "ADD";
             this.formDetail = true;
         },
+        btnDeleteOnClick_1(feeId) {
+            this.listFeeIdDelete = [];
+            this.listFeeIdDelete.push(feeId);
+            this.formMode = "DELETE";
+            this.messageDelete = "Bạn có chắc chắn muốn xóa khoản thu đã chọn?";
+            this.dialogDelete = true;
+        },
+        btnDeleteOnClick_n() {
+            this.listFeeIdDelete = [];
+            this.formMode = "DELETE";
+            this.messageDelete = "Bạn có chắc chắn muốn xóa những khoản thu đã chọn?";
+            this.dialogDelete = true;
+        },
         closeForm() {
             this.formMode = null;
             this.formDetail = false;
+            this.dialogDelete = false;
+            this.messageDelete = "";
+            this.listFeeIdDelete = [];
         },
         loadData() {
             axios.get('http://localhost:60931/api/v1/Fees')
@@ -172,15 +193,10 @@ export default {
                     alert(res);
                 })
         },
-        btnDeleteOnClick(id) {
-            axios.delete('http://localhost:60931/api/v1/Fees/' + id)
-                .then(res => {
-                    console.log(res.data);
-                    this.loadData();
-                })
-                .catch(res => {
-                    alert(res);
-                })
+        isBool(val) {
+            if (typeof val === typeof true) 
+                return true;
+            return false;
         }
     },
 }
@@ -335,6 +351,11 @@ export default {
 
             .table table .FeeName {
                 width: 300px;
+            }
+
+            .table table .icon-checkbox {
+                width: 20px;
+                height: 20px;
             }
 
 .footer {

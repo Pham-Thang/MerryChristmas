@@ -22,6 +22,10 @@ input[type="checkbox"] {
     border: none;
 }
 
+input[type="checkbox"] + label {
+    cursor: pointer;
+}
+
 input[type="checkbox"] + label span{
     display: inline-block;
     width: 20px;

@@ -61,3 +61,7 @@
     .m-icon-button:hover, .m-icon-button:focus {
         background-color: #e9ebee;
     }
+
+    .m-icon-button:disabled {
+        opacity: 0.3;
+    }

@@ -59,3 +59,4 @@ C:\Users\phamt\source\repos\MISA.EMIS.MF734.PVTHANG\MISA.EMIS.MF734.PVTHANG.Api\
 C:\Users\phamt\source\repos\MISA.EMIS.MF734.PVTHANG\MISA.EMIS.MF734.PVTHANG.Api\bin\Debug\net5.0\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
 C:\Users\phamt\source\repos\MISA.EMIS.MF734.PVTHANG\MISA.EMIS.MF734.PVTHANG.Api\bin\Debug\net5.0\Newtonsoft.Json.dll
 C:\Users\phamt\source\repos\MISA.EMIS.MF734.PVTHANG\MISA.EMIS.MF734.PVTHANG.Api\bin\Debug\net5.0\Newtonsoft.Json.Bson.dll
+C:\Users\pvthang\Documents\MerryChristmas\MISA.EMIS.MF734.PVTHANG\MISA.EMIS.MF734.PVTHANG.Api\obj\Debug\net5.0\MISA.EMIS.MF734.PVTHANG.Api.pdb

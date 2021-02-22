@@ -116,6 +116,10 @@ export default {
         cursor: pointer;
     }
 
+        .menu__content .item:hover{
+           background-color: #404F64;
+        }
+
         .menu__content .item .item__icon{
            width: 30px;
            height: 30px;

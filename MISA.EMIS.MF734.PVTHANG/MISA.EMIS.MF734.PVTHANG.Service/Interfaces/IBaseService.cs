@@ -8,9 +8,9 @@ namespace MISA.EMIS.MF734.PVTHANG.Service.Interfaces
     public interface IBaseService<TEntity>
     {
         ServiceResult GetAll();
-        ServiceResult GetById(String id);
+        ServiceResult GetById(int id);
         ServiceResult Insert(TEntity entity);
         ServiceResult Update(TEntity entity);
-        ServiceResult Delete(String id);
+        ServiceResult Delete(int id);
     }
 }

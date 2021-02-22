@@ -19,13 +19,13 @@ namespace MISA.EMIS.MF734.PVTHANG.Service.Classes
             _serviceResult = new ServiceResult();
             _dbConnector = new DatabaseConnector();
         }
-        public ServiceResult GetAll()
+        public virtual ServiceResult GetAll()
         {
             var sqlCommand = $"SELECT * FROM {_className}";
             _serviceResult.Data = _dbConnector.GetList<TEntity>(sqlCommand, new { }, System.Data.CommandType.Text);
             return _serviceResult;
         }
-        public ServiceResult GetById(String id)
+        public virtual ServiceResult GetById(int id)
         {
             var sqlCommand = $"SELECT * FROM {_className} WHERE {_className}Id = '{id}'";
             _serviceResult.Data = _dbConnector.GetFirst<TEntity>(sqlCommand, new { }, System.Data.CommandType.Text);
@@ -72,7 +72,7 @@ namespace MISA.EMIS.MF734.PVTHANG.Service.Classes
             }
             return _serviceResult;
         }
-        public virtual ServiceResult Delete(String id)
+        public virtual ServiceResult Delete(int id)
         {
             var properties = typeof(TEntity).GetProperties();
             var sqlCommand = $"SELECT isSystem FROM {_className} WHERE {_className}Id = '{id}';";

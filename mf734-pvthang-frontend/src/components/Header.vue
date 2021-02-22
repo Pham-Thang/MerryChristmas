@@ -17,8 +17,11 @@
                 <option class="m-option">2018-2019</option>
             </select>
         </div>
-        <div class="item float--right">
-            <div>Trường mẫu giáo Edu platform 1</div>
+        <div class="item float--right m-flex">
+            <div class="home m-flex">
+                <div class="icon icon-home"></div>
+                <div class="text">Trường mẫu giáo Edu platform 1</div>
+            </div>
         </div>
     </div>
 </template>
@@ -78,4 +81,31 @@ export default {
     .item .year {
         margin-right: 10px;
     }
+
+    .item .home {
+        height: 32px;
+        width: 300px;
+        display: flex;
+        align-items: center;
+        margin: 0 8px 0 8px;
+    }
+
+        .item .home .icon{
+            height: 30px;
+            width: 30px;
+            border: 1px solid #0FA655;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .item .home .text{
+            height: 30px;
+            width: calc(100% - 32px - 1px);
+            border: 1px solid #cccccc;
+            border-left: none;
+            padding: 0 8px 0 12px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+        }
 </style>

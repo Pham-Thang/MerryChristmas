@@ -8,7 +8,7 @@
         </div>
         <div class="option">
             <div class="option__item float--left">
-                <input type="checkbox" id="displayFeeInActive"/>
+                <input type="checkbox" id="displayFeeInActive" v-model="showFeeInactive"/>
                 <label for="displayFeeInActive"><span></span>Hiển thị khoản thu ngừng theo dõi</label>
             </div>
             <div class="option__item float--right">
@@ -29,23 +29,30 @@
                             <input type="checkbox" id="0" v-model="selectAllRows"/>
                             <label for="0"><span></span></label>
                         </th>
-                        <th v-for="col in cols" :key="col.key">{{col.title}}</th>
+                        <th v-for="col in cols" :key="col.key" :class="col.key">{{col.title}}</th>
                         <th class="optionCol"></th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="(fee, index) in listFee" :key="index" 
-                        :class="{'odd-row': index%2 === 1, 'row-on-select': feeIds[fee.FeeId + ''] === true}">
+                        v-show="fee.IsActive || showFeeInactive"
+                        :class="{'odd-row': index%2 === 1, 'row-on-select': feeIds[fee.FeeId] === true}">
                         <td class="selectCol">
-                            <input type="checkbox" :id="fee.FeeId" v-model="feeIds[fee.FeeId + '']"/>
+                            <input type="checkbox" :id="fee.FeeId" v-model="feeIds[fee.FeeId]"/>
                             <label :for="fee.FeeId"><span></span></label>
                         </td>
-                        <td v-for="col in cols" :key="col.key" >{{fee[col.key]}}</td>
+                        <td v-for="col in cols" :key="col.key" :class="col.key">
+                            <span v-if="col.key === 'FeeName'" @click="btnEditOnClick(fee.FeeId)" class="fee-name m-flex">
+                                {{fee[col.key]}}
+                                <span v-if="fee.IsSystem" class="icon-i" title="Đây là khoản thu mặc định của hệ thống, bạn không thể xóa."></span>
+                            </span>
+                            <span v-if="col.key !== 'FeeName'">{{fee[col.key]}}</span>
+                        </td>
                         <td class="optionCol">
                             <div class="m-flex">
-                                <div class="icon icon-edit" @click="btnEditOnClick"></div>
-                                <div class="icon icon-duplicate"></div>
-                                <div class="icon icon-delete"></div>
+                                <div class="icon icon-edit" @click="btnEditOnClick(fee.FeeId)"></div>
+                                <div class="icon icon-duplicate" @click="btnDuplicateOnClick(fee.FeeId)"></div>
+                                <div class="icon icon-delete" @click="btnDeleteOnClick(fee.FeeId)"></div>
                             </div>
                         </td>
                     </tr>
@@ -53,7 +60,11 @@
             </table>
         </div>
         <div class="footer">Tổng số: {{listFee.length}} kết quả</div>
-        <FeeDetail v-if="formDetail" @close="closeForm" :mode="formMode" :listFeeGroup="listFeeGroup"/>
+        <FeeDetail v-if="formDetail" @close="closeForm" :mode="formMode" :listFeeGroup="listFeeGroup" :feeId="feeIdChange" @reloadData="loadData"/>
+        <div id="notification">
+            <div class="modal"></div>
+            <div class="dialog"></div>
+        </div>
     </div>
 </template>
 <script>
@@ -114,6 +125,9 @@ export default {
             feeIds: {},
             formDetail: false,
             formMode: null,
+            selectAllRows: false,
+            feeIdChange: null,
+            showFeeInactive: false,
         }
     },
     components: {
@@ -124,11 +138,18 @@ export default {
     },
     methods: {
         btnAddOnClick() {
+            this.feeIdChange = null;
             this.formMode = "ADD";
             this.formDetail = true;
         },
-        btnEditOnClick() {
+        btnEditOnClick(feeId) {
+            this.feeIdChange = feeId;
             this.formMode = "EDIT";
+            this.formDetail = true;
+        },
+        btnDuplicateOnClick(feeId) {
+            this.feeIdChange = feeId;
+            this.formMode = "ADD";
             this.formDetail = true;
         },
         closeForm() {
@@ -150,38 +171,18 @@ export default {
                 .catch(res => {
                     alert(res);
                 })
+        },
+        btnDeleteOnClick(id) {
+            axios.delete('http://localhost:60931/api/v1/Fees/' + id)
+                .then(res => {
+                    console.log(res.data);
+                    this.loadData();
+                })
+                .catch(res => {
+                    alert(res);
+                })
         }
     },
-    computed: {
-        selectAllRows: {
-            get() {
-                for (var i in this.listFee) {
-                    if (this.feeIds[this.listFee[i].FeeId] !== true) {
-                        return false;
-                    }
-                }
-                return true;
-            },
-            set(val) {
-                if (val === true) {
-                    this.feeIds = {};
-                    for (let i in this.listFee) {
-                        console.log(i)
-                        this.feeIds[this.listFee[i].FeeId] = true;
-                    }
-                } else {
-                    // for (let i in this.listFee) {
-                    //     if (this.feeIds[this.listFee[i].FeeId] !== true) {
-                    //         return;
-                    //     }
-                    // }
-                    for (let i in this.listFee) {
-                        this.feeIds[this.listFee[i].FeeId] = false;
-                    }
-                }
-            }
-        }
-    }
 }
 </script>
 <style>
@@ -311,15 +312,29 @@ export default {
                     cursor: pointer;
                     margin: 0 2px 0 2px;
                 }
-            
 
             .table table .odd-row {
                 background-color: #F5F6FA;
             }
-            
 
             .table table .row-on-select {
                 background-color: #cce8ff;
+            }
+
+            .table table .fee-name {
+                color: #0997eb;
+                cursor: pointer;
+            }
+
+            .table table .icon-i {
+                width: 20px;
+                height: 20px;
+                cursor: pointer;
+                margin: 0 8px 0 8px;
+            }
+
+            .table table .FeeName {
+                width: 300px;
             }
 
 .footer {
@@ -330,5 +345,32 @@ export default {
     align-items: center;
 }
 
+#notification {
+    display: none;
+}
 
+#notification .modal {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    background-color: #cccccc;
+    opacity: 0.6;
+    z-index: 3;
+}
+
+#notification .dialog {
+    position: fixed;
+    z-index: 3;
+    width: calc(1000px - 24px - 24px);
+    height: 600px;
+    top: calc((100vh - 600px) / 2);
+    left: calc((100vw - 1000px) / 2);
+    background-color: #fff;
+    border-radius: 4px;
+    padding-left: 24px;
+    padding-right: 24px;
+    overflow: hidden;
+}
 </style>

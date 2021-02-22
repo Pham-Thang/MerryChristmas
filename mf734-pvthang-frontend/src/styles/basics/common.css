@@ -85,3 +85,11 @@
 .icon-duplicate {
     background: url('../../assets/ImagesIcons/ic_Duplicate_24.svg') no-repeat center;
 }
+
+.icon-home {
+    background: url('../../assets/ImagesIcons/home.svg') no-repeat center;
+}
+
+.icon-i {
+    background: url('../../assets/ImagesIcons/ic_Info_20.svg') no-repeat center;
+}

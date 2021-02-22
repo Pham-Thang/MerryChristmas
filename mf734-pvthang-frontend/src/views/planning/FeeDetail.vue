@@ -148,13 +148,13 @@
                     <label for="IsActive"><span></span>Ngừng theo dõi</label>
                 </div>
                 <div class="footer__item float--right">
-                    <button class="m-button">Lưu</button>
+                    <button class="m-button" @click="saveOnClick(true)">Lưu</button>
                 </div>
                 <div class="footer__item float--right" v-if="mode === 'ADD'">
-                    <button class="m-button" @click="saveOnClick">Lưu và thêm mới</button>
+                    <button class="m-button" @click="saveOnClick(false)">Lưu và thêm mới</button>
                 </div>
                 <div class="footer__item float--right">
-                    <button class="m-second-button" @click="close">Đóng</button>
+                    <button class="m-second-button" @click="close()">Đóng</button>
                 </div>
             </div>
         </div>
@@ -169,7 +169,7 @@ export default {
             fee: {
                 FeeName: "",
                 FeeGroupId: null,
-                Price: 0,
+                Price: null,
                 Unit: 2,
                 ApplyObject: 3,
                 Property: null,
@@ -237,10 +237,14 @@ export default {
     props: {
         mode: String,
         listFeeGroup: Array,
+        feeId: Number
     },
     methods: {
         close() {
             this.$emit('close');
+        },
+        reload() {
+            this.$emit('reloadData');
         },
         validateData(key) {
             if (this.validate[key].Require == true && (this.fee[key] === null || this.fee[key] === "")) {
@@ -249,7 +253,7 @@ export default {
                 this.validate[key].Status = true;
             }
         },
-        saveOnClick() {
+        saveOnClick(close) {
             var flag = true;
             for (var key in this.validate) {
                 this.validateData(key);
@@ -258,10 +262,22 @@ export default {
                     break;
                 }
             }
-            if (flag) {
+            if (flag && this.mode === 'ADD') {
                 axios.post('http://localhost:60931/api/v1/Fees', this.fee)
                 .then(res => {
-                    alert(res.data);
+                    console.log(res.data);
+                    this.reload();
+                    if (close) this.close();
+                })
+                .catch(res => {
+                    alert(res);
+                })
+            } else if (flag && this.mode === 'EDIT') {
+                axios.put('http://localhost:60931/api/v1/Fees', this.fee)
+                .then(res => {
+                    console.log(res.data);
+                    this.reload();
+                    this.close();
                 })
                 .catch(res => {
                     alert(res);
@@ -274,6 +290,17 @@ export default {
             inserted: function (el) {
                 el.focus()
             }
+        }
+    },
+    mounted() {
+        if (this.feeId !== null) {
+            axios.get('http://localhost:60931/api/v1/Fees/' + this.feeId)
+                .then(res => {
+                    this.fee = res.data;
+                })
+                .catch(res => {
+                    alert(res);
+                })
         }
     }
 }

@@ -31,7 +31,7 @@ namespace MISA.EMIS.MF734.PVTHANG.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get(String id)
+        public IActionResult Get(int id)
         {
             var result = _baseService.GetById(id);
             if (result.Success == true)
@@ -61,7 +61,7 @@ namespace MISA.EMIS.MF734.PVTHANG.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(String id)
+        public IActionResult Delete(int id)
         {
             var result = _baseService.Delete(id);
             if (result.Success == true)
